@@ -58,15 +58,41 @@ CALL sp_insertar_cliente('101110111', 'Otra Persona', '80000000');
 
 CALL sp_insertar_mascota('M99', 'Fantasma', 'OTRO', 20, '999999999');
 
--- 7) Integridad: edad fuera del rango 18-60 (CHECK)
--- La base no acepta edades menores de 18 ni mayores de 60.
--- Lo esperado: Error 3819, Check constraint 'chk_mascota_edad' is violated.
-
-CALL sp_insertar_mascota('M98', 'Chiquito', 'GATO', 5, '101110111');
-
 -- 6) Privilegios efectivos de vet_app
 -- Sirve para confirmar qué puede hacer realmente esta cuenta.
 -- Lo esperado: solo USAGE y EXECUTE sobre los 7 procedimientos;
 -- nada de SELECT, INSERT, UPDATE ni DELETE sobre las tablas.
 
 SHOW GRANTS;
+
+-- 7) Integridad: edad fuera del rango 18-60 (CHECK)
+-- La base no acepta edades menores de 18 ni mayores de 60.
+-- Lo esperado: Error 3819, Check constraint 'chk_mascota_edad' is violated.
+
+CALL sp_insertar_mascota('M98', 'Chiquito', 'GATO', 5, '101110111');
+
+-- 8) Listar clientes
+-- Lo esperado: salen Ana Mora y Luis Solis con su cédula y teléfono.
+
+CALL sp_listar_clientes();
+
+-- 9) Actualizar una mascota
+-- A Nina (M03) se le cambia la especie, la edad y el dueño.
+-- Lo esperado: en el listado M03 aparece como GATO, 25 años, dueño Luis Solis.
+
+CALL sp_actualizar_mascota('M03', 'Nina', 'GATO', 25, '202220222');
+CALL sp_listar_mascotas_con_dueno();
+
+-- Si el código no existe, el procedimiento avisa en vez de no hacer nada.
+-- Lo esperado: "No existe la mascota que desea actualizar."
+
+CALL sp_actualizar_mascota('X00', 'Nadie', 'PERRO', 20, '101110111');
+
+-- 10) Eliminar una mascota
+-- La primera vez se borra M03; la segunda ya no existe y el procedimiento avisa.
+-- Lo esperado: la primera funciona y la segunda da
+-- "No existe la mascota que desea eliminar."
+
+CALL sp_eliminar_mascota('M03');
+CALL sp_eliminar_mascota('M03');
+CALL sp_listar_mascotas();

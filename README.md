@@ -35,7 +35,7 @@ Todos usan `SQL SECURITY DEFINER` con `DEFINER = vet_definer@localhost`.
 
 | Usuario | Permisos |
 |---|---|
-| `vet_definer` | SELECT, INSERT sobre `veterinaria.cliente`; SELECT, INSERT, UPDATE, DELETE sobre `veterinaria.mascota`. Es el DEFINER de los procedimientos |
+| `vet_definer` | SELECT, INSERT sobre `veterinaria.cliente`; SELECT, INSERT, UPDATE, DELETE sobre `veterinaria.mascota`. Es el DEFINER de los procedimientos y tiene EXECUTE sobre ellos, porque MySQL lo exige en el contexto DEFINER (sin eso, `CALL` falla con el error 1370) |
 | `vet_app` | Solo EXECUTE sobre los 7 procedimientos. Sin privilegios directos sobre las tablas. Es la cuenta usada desde Java |
 
 La aplicación nunca usa `root`.
@@ -58,6 +58,8 @@ VET_DB_USER=vet_app
 VET_DB_PASSWORD=<contraseña local de vet_app>
 ```
 
+> **Nombre de la base:** la sección 1 del enunciado pide crear la base `veterinaria`, por eso la URL usa `/veterinaria`. Si se prefiere el nombre `veterinaria_examen` del ejemplo de la sección 5, basta con cambiar el nombre en `01_veterinaria.sql`, en `02_pruebas_seguridad.sql` y en `VET_DB_URL`.
+
 ## 3. Abrir la aplicación
 
 1. Abrir el proyecto en IntelliJ (Maven descarga `mysql-connector-j`).
@@ -79,6 +81,7 @@ Abrir en Workbench una conexión con el usuario **`vet_app`** y ejecutar `databa
 | 5 | `CALL sp_insertar_mascota('M99', ..., '999999999')` | `El cliente dueño no existe.` |
 | 6 | `SHOW GRANTS;` | Solo `EXECUTE` sobre los 7 procedimientos |
 | 7 | `CALL sp_insertar_mascota('M98', ..., 5, ...)` | `Error 3819: Check constraint 'chk_mascota_edad' is violated` |
+| 8–10 | Listar clientes, actualizar y eliminar mascota | Funcionan, y avisan si la mascota no existe |
 
 ## Pruebas funcionales desde la interfaz
 

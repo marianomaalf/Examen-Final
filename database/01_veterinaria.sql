@@ -53,7 +53,7 @@ DROP USER IF EXISTS 'vet_app'@'localhost';
 DROP USER IF EXISTS 'vet_definer'@'localhost';
 
 CREATE USER 'vet_definer'@'localhost' IDENTIFIED BY '<<CONTRASENA_VET_DEFINER>>';
-CREATE USER 'vet_app'@'localhost'     IDENTIFIED BY '<<CONTRASENA_VET_APP>>';
+CREATE USER 'vet_app'@'localhost'     IDENTIFIED BY '<<CONTRASENA_VET_APP>>'; -- la contraseña se quedó así
 
 GRANT SELECT, INSERT                 ON veterinaria.cliente TO 'vet_definer'@'localhost';
 GRANT SELECT, INSERT, UPDATE, DELETE ON veterinaria.mascota TO 'vet_definer'@'localhost';
@@ -171,6 +171,18 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+-- Con SQL SECURITY DEFINER, MySQL también verifica que el DEFINER tenga
+-- EXECUTE sobre la rutina; sin esto vet_app recibe ERROR 1370
+-- ("execute command denied to user 'vet_definer'") al hacer CALL.
+-- vet_definer NO recibe permisos adicionales sobre las tablas.
+GRANT EXECUTE ON PROCEDURE veterinaria.sp_listar_clientes           TO 'vet_definer'@'localhost';
+GRANT EXECUTE ON PROCEDURE veterinaria.sp_insertar_cliente          TO 'vet_definer'@'localhost';
+GRANT EXECUTE ON PROCEDURE veterinaria.sp_listar_mascotas           TO 'vet_definer'@'localhost';
+GRANT EXECUTE ON PROCEDURE veterinaria.sp_insertar_mascota          TO 'vet_definer'@'localhost';
+GRANT EXECUTE ON PROCEDURE veterinaria.sp_actualizar_mascota        TO 'vet_definer'@'localhost';
+GRANT EXECUTE ON PROCEDURE veterinaria.sp_eliminar_mascota          TO 'vet_definer'@'localhost';
+GRANT EXECUTE ON PROCEDURE veterinaria.sp_listar_mascotas_con_dueno TO 'vet_definer'@'localhost';
 
 -- vet_app solo recibe EXECUTE sobre los siete procedimientos.
 -- No tiene SELECT, INSERT, UPDATE ni DELETE directos sobre las tablas.
