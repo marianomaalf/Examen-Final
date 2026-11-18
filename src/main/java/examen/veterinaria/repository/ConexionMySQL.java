@@ -4,10 +4,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-/**
- * Obtiene conexiones JDBC leyendo la configuración de variables de entorno.
- * No contiene credenciales: VET_DB_URL, VET_DB_USER y VET_DB_PASSWORD se definen en IntelliJ.
- */
 public final class ConexionMySQL {
     private final String url;
     private final String usuario;
@@ -34,7 +30,6 @@ public final class ConexionMySQL {
         return DriverManager.getConnection(url, usuario, contrasena);
     }
 
-    /** Traduce una SQLException a un mensaje claro para la interfaz. */
     static PersistenciaException error(String operacion, SQLException e) {
         String detalle;
         if ("45000".equals(e.getSQLState())) {

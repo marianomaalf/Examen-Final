@@ -38,6 +38,17 @@ CREATE TABLE mascota (
 
 CREATE INDEX idx_mascota_cedula_cliente ON mascota (cedula_cliente);
 
+-- Los procedimientos se eliminan ANTES que los usuarios: desde MySQL 8.0.22,
+-- DROP USER falla (error 4006) si la cuenta es DEFINER de alguna rutina.
+-- Así el script se puede ejecutar varias veces sin errores.
+DROP PROCEDURE IF EXISTS sp_listar_clientes;
+DROP PROCEDURE IF EXISTS sp_insertar_cliente;
+DROP PROCEDURE IF EXISTS sp_listar_mascotas;
+DROP PROCEDURE IF EXISTS sp_insertar_mascota;
+DROP PROCEDURE IF EXISTS sp_actualizar_mascota;
+DROP PROCEDURE IF EXISTS sp_eliminar_mascota;
+DROP PROCEDURE IF EXISTS sp_listar_mascotas_con_dueno;
+
 DROP USER IF EXISTS 'vet_app'@'localhost';
 DROP USER IF EXISTS 'vet_definer'@'localhost';
 
@@ -46,14 +57,6 @@ CREATE USER 'vet_app'@'localhost'     IDENTIFIED BY '<<CONTRASENA_VET_APP>>';
 
 GRANT SELECT, INSERT                 ON veterinaria.cliente TO 'vet_definer'@'localhost';
 GRANT SELECT, INSERT, UPDATE, DELETE ON veterinaria.mascota TO 'vet_definer'@'localhost';
-
-DROP PROCEDURE IF EXISTS sp_listar_clientes;
-DROP PROCEDURE IF EXISTS sp_insertar_cliente;
-DROP PROCEDURE IF EXISTS sp_listar_mascotas;
-DROP PROCEDURE IF EXISTS sp_insertar_mascota;
-DROP PROCEDURE IF EXISTS sp_actualizar_mascota;
-DROP PROCEDURE IF EXISTS sp_eliminar_mascota;
-DROP PROCEDURE IF EXISTS sp_listar_mascotas_con_dueno;
 
 DELIMITER $$
 
