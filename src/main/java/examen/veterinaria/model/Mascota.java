@@ -10,7 +10,7 @@ public class Mascota {
         this.codigo = validar(codigo, "Código");
         this.nombre = validar(nombre, "Nombre");
         if (especie == null) throw new IllegalArgumentException("Seleccione una especie.");
-        if (edad < 0 || edad > 40) throw new IllegalArgumentException("La edad debe estar entre 0 y 40 años.");
+        if (edad < 18 || edad > 60) throw new IllegalArgumentException("La edad debe estar entre 18 y 60 años.");
         this.especie = especie;
         this.edad = edad;
         this.cedulaCliente = validar(cedulaCliente, "Cédula del cliente");

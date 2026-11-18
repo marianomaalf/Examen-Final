@@ -33,7 +33,7 @@ CREATE TABLE mascota (
     CONSTRAINT chk_mascota_codigo CHECK (TRIM(codigo) <> ''),
     CONSTRAINT chk_mascota_nombre CHECK (TRIM(nombre) <> ''),
 
-    CONSTRAINT chk_mascota_edad   CHECK (edad BETWEEN 0 AND 40)
+    CONSTRAINT chk_mascota_edad   CHECK (edad BETWEEN 18 AND 60)
 ) ENGINE = InnoDB;
 
 CREATE INDEX idx_mascota_cedula_cliente ON mascota (cedula_cliente);
@@ -172,16 +172,8 @@ END$$
 
 DELIMITER ;
 
--- Con SQL SECURITY DEFINER, MySQL exige que el DEFINER también tenga EXECUTE
--- sobre la rutina; sin esto vet_app recibe ERROR 1370 al hacer CALL.
-GRANT EXECUTE ON PROCEDURE veterinaria.sp_listar_clientes           TO 'vet_definer'@'localhost';
-GRANT EXECUTE ON PROCEDURE veterinaria.sp_insertar_cliente          TO 'vet_definer'@'localhost';
-GRANT EXECUTE ON PROCEDURE veterinaria.sp_listar_mascotas           TO 'vet_definer'@'localhost';
-GRANT EXECUTE ON PROCEDURE veterinaria.sp_insertar_mascota          TO 'vet_definer'@'localhost';
-GRANT EXECUTE ON PROCEDURE veterinaria.sp_actualizar_mascota        TO 'vet_definer'@'localhost';
-GRANT EXECUTE ON PROCEDURE veterinaria.sp_eliminar_mascota          TO 'vet_definer'@'localhost';
-GRANT EXECUTE ON PROCEDURE veterinaria.sp_listar_mascotas_con_dueno TO 'vet_definer'@'localhost';
-
+-- vet_app solo recibe EXECUTE sobre los siete procedimientos.
+-- No tiene SELECT, INSERT, UPDATE ni DELETE directos sobre las tablas.
 GRANT EXECUTE ON PROCEDURE veterinaria.sp_listar_clientes           TO 'vet_app'@'localhost';
 GRANT EXECUTE ON PROCEDURE veterinaria.sp_insertar_cliente          TO 'vet_app'@'localhost';
 GRANT EXECUTE ON PROCEDURE veterinaria.sp_listar_mascotas           TO 'vet_app'@'localhost';

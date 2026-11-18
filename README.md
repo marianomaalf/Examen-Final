@@ -15,7 +15,7 @@ Arquitectura: `Main → Vista Swing → Controller → Service → interfaces Re
 `mascota.cedula_cliente` es **clave foránea** hacia `cliente.cedula` con `ON DELETE RESTRICT`, por lo que no se puede registrar una mascota con un dueño inexistente ni eliminar un cliente que tenga mascotas.
 Los datos del cliente (nombre, teléfono) se guardan solo en `cliente`; la mascota únicamente referencia la cédula (normalización: separación de entidades, sin datos repetidos).
 
-Restricciones `CHECK`: código, cédula, nombre y teléfono no pueden estar vacíos; `edad` entre 0 y 40, coherente con la validación del modelo `Mascota` y con los datos de ejemplo (edades 1, 3 y 5).
+Restricciones `CHECK`: código, cédula, nombre y teléfono no pueden estar vacíos; `edad` entre 18 y 60, como indica el enunciado. El modelo `Mascota` en Java valida el mismo rango. Por eso, en los datos de ejemplo se ajustaron las edades al rango permitido.
 
 ## Procedimientos almacenados
 
@@ -35,7 +35,7 @@ Todos usan `SQL SECURITY DEFINER` con `DEFINER = vet_definer@localhost`.
 
 | Usuario | Permisos |
 |---|---|
-| `vet_definer` | SELECT, INSERT sobre `veterinaria.cliente`; SELECT, INSERT, UPDATE, DELETE sobre `veterinaria.mascota`; EXECUTE sobre los 7 procedimientos (MySQL lo requiere para el contexto DEFINER) |
+| `vet_definer` | SELECT, INSERT sobre `veterinaria.cliente`; SELECT, INSERT, UPDATE, DELETE sobre `veterinaria.mascota`. Es el DEFINER de los procedimientos |
 | `vet_app` | Solo EXECUTE sobre los 7 procedimientos. Sin privilegios directos sobre las tablas. Es la cuenta usada desde Java |
 
 La aplicación nunca usa `root`.
@@ -78,6 +78,7 @@ Abrir en Workbench una conexión con el usuario **`vet_app`** y ejecutar `databa
 | 4 | `CALL sp_insertar_cliente('101110111', ...)` (duplicado) | `Ya existe un cliente con esa cédula.` |
 | 5 | `CALL sp_insertar_mascota('M99', ..., '999999999')` | `El cliente dueño no existe.` |
 | 6 | `SHOW GRANTS;` | Solo `EXECUTE` sobre los 7 procedimientos |
+| 7 | `CALL sp_insertar_mascota('M98', ..., 5, ...)` | `Error 3819: Check constraint 'chk_mascota_edad' is violated` |
 
 ## Pruebas funcionales desde la interfaz
 

@@ -11,13 +11,15 @@ USE veterinaria;
 
 -- 1) Carga de datos de ejemplo mediante procedimientos (debe funcionar)
 -- Son los mismos 2 clientes y 3 mascotas que venían en los archivos TXT.
+-- Las edades originales (3, 5 y 1) se ajustaron al rango 18-60 que pide el
+-- enunciado; con las originales la base las rechaza (ver prueba 7).
 -- Si ya se habían cargado antes, van a salir errores de duplicado y está bien.
 
 CALL sp_insertar_cliente('101110111', 'Ana Mora', '88881111');
 CALL sp_insertar_cliente('202220222', 'Luis Solis', '87772222');
-CALL sp_insertar_mascota('M01', 'Luna', 'GATO', 3, '101110111');
-CALL sp_insertar_mascota('M02', 'Rocky', 'PERRO', 5, '202220222');
-CALL sp_insertar_mascota('M03', 'Nina', 'PERRO', 1, '101110111');
+CALL sp_insertar_mascota('M01', 'Luna', 'GATO', 18, '101110111');
+CALL sp_insertar_mascota('M02', 'Rocky', 'PERRO', 20, '202220222');
+CALL sp_insertar_mascota('M03', 'Nina', 'PERRO', 19, '101110111');
 
 
 -- 2) PRUEBA DE SEGURIDAD: vet_app SÍ puede ejecutar procedimientos
@@ -54,7 +56,13 @@ CALL sp_insertar_cliente('101110111', 'Otra Persona', '80000000');
 -- no se puede registrar porque quedaría sin dueño.
 -- Lo esperado: "El cliente dueño no existe."
 
-CALL sp_insertar_mascota('M99', 'Fantasma', 'OTRO', 2, '999999999');
+CALL sp_insertar_mascota('M99', 'Fantasma', 'OTRO', 20, '999999999');
+
+-- 7) Integridad: edad fuera del rango 18-60 (CHECK)
+-- La base no acepta edades menores de 18 ni mayores de 60.
+-- Lo esperado: Error 3819, Check constraint 'chk_mascota_edad' is violated.
+
+CALL sp_insertar_mascota('M98', 'Chiquito', 'GATO', 5, '101110111');
 
 -- 6) Privilegios efectivos de vet_app
 -- Sirve para confirmar qué puede hacer realmente esta cuenta.
