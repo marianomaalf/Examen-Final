@@ -53,7 +53,7 @@ DROP USER IF EXISTS 'vet_app'@'localhost';
 DROP USER IF EXISTS 'vet_definer'@'localhost';
 
 CREATE USER 'vet_definer'@'localhost' IDENTIFIED BY '<<CONTRASENA_VET_DEFINER>>';
-CREATE USER 'vet_app'@'localhost'     IDENTIFIED BY '<<CONTRASENA_VET_APP>>'; -- la contraseña se quedó así
+CREATE USER 'vet_app'@'localhost'     IDENTIFIED BY '<<CONTRASENA_VET_APP>>';
 
 GRANT SELECT, INSERT                 ON veterinaria.cliente TO 'vet_definer'@'localhost';
 GRANT SELECT, INSERT, UPDATE, DELETE ON veterinaria.mascota TO 'vet_definer'@'localhost';
